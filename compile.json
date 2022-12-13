@@ -1,0 +1,26 @@
+{
+  "$schema": "https://qooxdoo.org/schema/compile-1-0-0.json",
+  "targets": [
+    {
+      "type": "source",
+      "outputPath": "compiled/source",
+      "bundle": {
+        "include": "qx.*"
+      }
+    },
+    {
+      "type": "build",
+      "outputPath": "compiled/build"
+    }
+  ],
+  "defaultTarget": "source",
+  "locales": ["en"],
+
+  "applications": [
+    {
+      "class": "ugpa.completer.demo.Application",
+      "theme": "ugpa.completer.theme.Theme",
+      "name": "ugpa.completer"
+    }
+  ]
+}
