@@ -17,7 +17,7 @@ qx.Class.define("ugpa.completer.Completer", {
 
     properties: {
         caseSensitivity: {
-            init: false,
+            init: true,
             check: "Boolean"
         },
 
@@ -56,6 +56,10 @@ qx.Class.define("ugpa.completer.Completer", {
         },
 
         _onFocus(){
+            const popup = this.getPopup();
+            popup.setVisibility("visible");
+            popup.placeToWidget(this.getWidget());
+
             const value = this.getWidget().getValue();
             this.__openPopup(value === null ? "" : value);
         },
@@ -80,8 +84,6 @@ qx.Class.define("ugpa.completer.Completer", {
                 button.addListener("execute", function(){ this.getWidget().setValue(value); }, this);
                 popup.add(button);
             });
-            popup.placeToWidget(this.getWidget());
-            popup.setVisibility("visible");
         },
 
         __getFilterModeFunc(){
