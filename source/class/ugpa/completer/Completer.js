@@ -85,19 +85,12 @@ qx.Class.define("ugpa.completer.Completer", {
         },
 
         __getFilterModeFunc(){
-            let filterModeFunc;
-            switch (this.getFilterMode()){
-                case "startsWith":
-                    filterModeFunc = input => value => value.startsWith(input);
-                    break;
-                case "contains":
-                    filterModeFunc = input => value => value.includes(input);
-                    break;
-                case "endsWith":
-                    filterModeFunc = input => value => value.endsWith(input)
-                    break;
-            }
-            return filterModeFunc;
+            const table = {
+                startsWith: input => value => value.startsWith(input),
+                contains: input => value => value.includes(input),
+                endsWith: input => value => value.endsWith(input)
+            };
+            return table[this.getFilterMode()];
         }
     }
 });
