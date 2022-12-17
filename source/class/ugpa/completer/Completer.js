@@ -2,6 +2,7 @@ qx.Class.define("ugpa.completer.Completer", {
     extend: qx.core.Object,
 
     construct(source, widget) {
+        // noinspection JSAnnotator
         super();
         this.__sourceModel = source;
         this.initPopup(new qx.ui.menu.Menu());

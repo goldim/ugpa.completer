@@ -43,11 +43,10 @@ qx.Class.define("ugpa.completer.demo.Application",
         qx.log.appender.Console;
       }
 
-      /*
-      -------------------------------------------------------------------------
-        Below is your actual application code...
-      -------------------------------------------------------------------------
-      */
+      const field = new qx.ui.form.TextField();
+      const source = new qx.data.Array(["a", "ab", "abc"]);
+      const completer = new ugpa.completer.Completer(source, field);
+      this.getRoot().add(field);
     }
   }
 });
