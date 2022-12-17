@@ -43,8 +43,9 @@ qx.Class.define("ugpa.completer.demo.Application",
         qx.log.appender.Console;
       }
 
+      // qx.theme.iconfont.LoadMaterialIcons;
       const field = new qx.ui.form.TextField();
-      const source = new qx.data.Array(["a", "ab", "abc"]);
+      const source = new qx.data.Array(["a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg", "abcdefgh"]);
       const completer = new ugpa.completer.Completer(source, field);
       this.getRoot().add(field);
     }
