@@ -79,15 +79,12 @@ qx.Class.define("ugpa.completer.Completer", {
             const popup = this.getPopup();
             popup.removeAll();
 
+            let values;
             if (!this.getCaseSensitivity()){
-                input = input.toLowerCase();
+                values = this.__filterCaseInsensitiveValues(input);
+            } else {
+                values = this.__filterCaseSensitiveValues(input);
             }
-            const values = this.__sourceModel.filter(value =>{
-                if (!this.getCaseSensitivity()){
-                    value = value.toLowerCase();
-                }
-                return this.__filterFunc(input)(value);
-            });
 
             values.slice(0, this.getMaxVisibleItems()).forEach(value => {
                 const button = new qx.ui.menu.Button(value);
@@ -97,6 +94,18 @@ qx.Class.define("ugpa.completer.Completer", {
                 }, this);
                 popup.add(button);
             });
+        },
+
+        __filterCaseInsensitiveValues(input){
+            input = input.toLowerCase();
+            return this.__sourceModel.filter(value =>{
+                value = value.toLowerCase();
+                return this.__filterFunc(input)(value);
+            });
+        },
+
+        __filterCaseSensitiveValues(input){
+            return this.__sourceModel.filter(this.__filterFunc(input));
         },
 
         __getFilterModeFunc(){
