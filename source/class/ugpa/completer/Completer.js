@@ -79,7 +79,15 @@ qx.Class.define("ugpa.completer.Completer", {
             const popup = this.getPopup();
             popup.removeAll();
 
-            const values = this.__sourceModel.filter(this.__filterFunc(input));
+            if (!this.getCaseSensitivity()){
+                input = input.toLowerCase();
+            }
+            const values = this.__sourceModel.filter(value =>{
+                if (!this.getCaseSensitivity()){
+                    value = value.toLowerCase();
+                }
+                return this.__filterFunc(input)(value);
+            });
 
             values.slice(0, this.getMaxVisibleItems()).forEach(value => {
                 const button = new qx.ui.menu.Button(value);

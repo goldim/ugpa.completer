@@ -47,6 +47,7 @@ qx.Class.define("ugpa.completer.demo.Application",
       const field = new qx.ui.form.TextField();
       const source = new qx.data.Array(["a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg", "abcdefgh"]);
       const completer = new ugpa.completer.Completer(source, field);
+      completer.setCaseSensitivity(false);
       this.getRoot().add(field);
     }
   }
