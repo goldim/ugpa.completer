@@ -8,6 +8,7 @@ qx.Class.define("ugpa.completer.Completer", {
         this.initPopup(new qx.ui.menu.Menu());
         this.initWidget(widget);
         this.__filterFunc = this.__getFilterModeFunc();
+        this.__oneAgainAfterFirstInput = false;
     },
 
     events: {
@@ -43,9 +44,7 @@ qx.Class.define("ugpa.completer.Completer", {
     },
 
     members: {
-        _applyWidget(widget, oldWidget){
-            if (oldWidget){
-            }
+        _applyWidget(widget){
             widget.addListener("input", this._onInput, this);
             widget.addListener("focus", this._onFocus, this);
             widget.addListener("focusout", this._onFocusOut, this);
@@ -61,7 +60,7 @@ qx.Class.define("ugpa.completer.Completer", {
             popup.placeToWidget(this.getWidget());
 
             const value = this.getWidget().getValue();
-            this.__openPopup(value === null ? "" : value);
+            this.__applyInput(value === null ? "" : value);
         },
 
         _onFocusOut(){
@@ -70,10 +69,13 @@ qx.Class.define("ugpa.completer.Completer", {
 
         _onInput(e){
             const input = e.getData();
-            this.__openPopup(input);
+            if (this.__oneAgainAfterFirstInput){
+                this.getPopup().setVisibility("visible");
+            }
+            this.__applyInput(input);
         },
 
-        __openPopup(input){
+        __applyInput(input){
             const popup = this.getPopup();
             popup.removeAll();
 
@@ -81,7 +83,10 @@ qx.Class.define("ugpa.completer.Completer", {
 
             values.slice(0, this.getMaxVisibleItems()).forEach(value => {
                 const button = new qx.ui.menu.Button(value);
-                button.addListener("execute", function(){ this.getWidget().setValue(value); }, this);
+                button.addListener("execute", function(){
+                    this.getWidget().setValue(value);
+                    this.__oneAgainAfterFirstInput = true;
+                }, this);
                 popup.add(button);
             });
         },
