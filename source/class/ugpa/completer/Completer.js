@@ -54,6 +54,8 @@ qx.Class.define("ugpa.completer.Completer", {
 
     members: {
         _applyWidget(widget){
+            qx.Interface.assertObject(widget, ugpa.completer.IWidget);
+
             widget.addListener("input", this._onInput, this);
             widget.addListener("click", this._onFocus, this);
             widget.addListener("tap", this._onFocus, this);
