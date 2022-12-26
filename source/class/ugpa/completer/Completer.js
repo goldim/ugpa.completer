@@ -6,7 +6,7 @@ qx.Class.define("ugpa.completer.Completer", {
         super();
         this.__sourceModel = source;
         this.initPopup(new qx.ui.menu.Menu());
-        this.initWidget(widget);
+        this.setWidget(widget);
         this.__filterFunc = this.__getFilterModeFunc();
     },
 
@@ -36,12 +36,13 @@ qx.Class.define("ugpa.completer.Completer", {
         },
 
         widget: {
-            deferredInit: true,
+            init: null,
             apply: "_applyWidget"
         },
 
         popup: {
-            deferredInit: true
+            deferredInit: true,
+            apply: "_applyPopup"
         },
 
         filterMode: {
@@ -56,6 +57,22 @@ qx.Class.define("ugpa.completer.Completer", {
             widget.addListener("input", this._onInput, this);
             widget.addListener("click", this._onFocus, this);
             widget.addListener("tap", this._onFocus, this);
+
+            this.__updatePopupWidth();
+        },
+
+        __updatePopupWidth(){
+            const popup = this.getPopup();
+            if (popup){
+                const widget = this.getWidget();
+                if (widget){
+                    popup.setWidth(widget.getWidth());
+                }
+            }
+        },
+
+        _applyPopup(){
+            this.__updatePopupWidth();
         },
 
         _applyFilterMode(){
