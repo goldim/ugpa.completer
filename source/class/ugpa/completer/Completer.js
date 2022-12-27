@@ -73,7 +73,8 @@ qx.Class.define("ugpa.completer.Completer", {
             }
         },
 
-        _applyPopup(){
+        _applyPopup(popup){
+            qx.Interface.assertObject(popup, ugpa.completer.IPopup);
             this.__updatePopupWidth();
         },
 
@@ -96,7 +97,7 @@ qx.Class.define("ugpa.completer.Completer", {
         _onInput(e){
             const input = e.getData();
             if (input.length < this.getMinLength()) {
-                if (this.getPopup().getVisibility() === "visible"){
+                if (this.getPopup().isVisible()){
                     this.getPopup().hide();
                 }
                 return;
