@@ -1,10 +1,13 @@
 qx.Class.define("ugpa.completer.Completer", {
     extend: qx.core.Object,
+    implement: [qx.ui.form.IModel],
 
-    construct(source, widget) {
+    construct(model, widget) {
         // noinspection JSAnnotator
         super();
-        this.__sourceModel = source;
+        if (model){
+            this.setModel(model);
+        }
         this.initPopup(new qx.ui.menu.Menu());
         this.setWidget(widget);
         this.__filterFunc = this.__getFilterModeFunc();
@@ -16,6 +19,12 @@ qx.Class.define("ugpa.completer.Completer", {
     },
 
     properties: {
+        model: {
+            init: null,
+            apply: "_applyModel",
+            event: "changeModel"
+        },
+
         autofocus: {
             init: false,
             check: "Boolean"
@@ -53,6 +62,9 @@ qx.Class.define("ugpa.completer.Completer", {
     },
 
     members: {
+        _applyModel(model){
+        },
+
         _applyWidget(widget){
             qx.Interface.assertObject(widget, ugpa.completer.IWidget);
 
@@ -153,14 +165,14 @@ qx.Class.define("ugpa.completer.Completer", {
 
         __filterCaseInsensitiveValues(input){
             input = input.toLowerCase();
-            return this.__sourceModel.filter(value =>{
+            return this.getModel().filter(value =>{
                 value = value.toLowerCase();
                 return this.__filterFunc(input)(value);
             });
         },
 
         __filterCaseSensitiveValues(input){
-            return this.__sourceModel.filter(this.__filterFunc(input));
+            return this.getModel().filter(this.__filterFunc(input));
         },
 
         __getFilterModeFunc(){
