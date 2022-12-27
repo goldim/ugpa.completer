@@ -2,13 +2,13 @@ qx.Class.define("ugpa.completer.Completer", {
     extend: qx.core.Object,
     implement: [qx.ui.form.IModel],
 
-    construct(model, widget) {
+    construct(variants, widget) {
         // noinspection JSAnnotator
         super();
-        if (model){
-            this.setModel(model);
-        }
-        this.initPopup(new qx.ui.menu.Menu());
+        this.__variants = variants;
+        const menu = new qx.ui.menu.Menu();
+        this.initPopup(menu);
+        this.setModel(menu);
         this.setWidget(widget);
         this.__filterFunc = this.__getFilterModeFunc();
     },
@@ -135,14 +135,18 @@ qx.Class.define("ugpa.completer.Completer", {
         __applyInput(input){
             this.__clearPopup();
             const values = this.__getValuesFromSourceByWord(input);
-            values.slice(0, this.getMaxVisibleItems()).forEach(this.__addItemOnPopup, this);
-            this.__applyAutofocus();
+            if (values.length){
+                values.slice(0, this.getMaxVisibleItems()).forEach(this.__addItemOnPopup, this);
+                this.__applyAutofocus();
+            } else {
+                this.getPopup().hide();
+            }
         },
 
         __addItemOnPopup(value){
             const button = new qx.ui.menu.Button(value);
             button.addListener("execute", this._onItemPressed, this);
-            this.getPopup().add(button);
+            this.getModel().add(button);
         },
 
         _onItemPressed(e){
@@ -151,8 +155,8 @@ qx.Class.define("ugpa.completer.Completer", {
         },
 
         __clearPopup(){
-            const popup = this.getPopup();
-            popup.removeAll();
+            const model = this.getModel();
+            model.removeAll();
         },
 
         __getValuesFromSourceByWord(input){
@@ -167,14 +171,14 @@ qx.Class.define("ugpa.completer.Completer", {
 
         __filterCaseInsensitiveValues(input){
             input = input.toLowerCase();
-            return this.getModel().filter(value =>{
+            return this.__variants.filter(value =>{
                 value = value.toLowerCase();
                 return this.__filterFunc(input)(value);
             });
         },
 
         __filterCaseSensitiveValues(input){
-            return this.getModel().filter(this.__filterFunc(input));
+            return this.__variants.filter(this.__filterFunc(input));
         },
 
         __getFilterModeFunc(){
