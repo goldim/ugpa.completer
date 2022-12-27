@@ -99,10 +99,7 @@ qx.Class.define("ugpa.completer.Completer", {
             if (!value && this.getMinLength() > 0){
                 return;
             }
-            const popup = this.getPopup();
-            popup.show();
-            popup.placeToWidget(this.getWidget());
-
+            this.__showPopup();
             this.__applyInput(value === null ? "" : value);
         },
 
@@ -115,9 +112,14 @@ qx.Class.define("ugpa.completer.Completer", {
                 return;
             }
 
-            this.getPopup().show();
-            this.getPopup().placeToWidget(this.getWidget());
+            this.__showPopup();
             this.__applyInput(input);
+        },
+
+        __showPopup(){
+            const popup = this.getPopup();
+            popup.show();
+            popup.placeToWidget(this.getWidget());
         },
 
         __applyAutofocus(){
