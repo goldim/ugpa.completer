@@ -1,21 +1,20 @@
 qx.Class.define("ugpa.completer.Completer", {
     extend: qx.core.Object,
     implement: [qx.ui.form.IModel],
+    include: ugpa.completer.MFilterMode,
 
-    construct(variants, widget) {
+    construct(source, widget) {
         // noinspection JSAnnotator
         super();
-        this.__variants = variants;
+        this.__source = source;
         const menu = new qx.ui.menu.Menu();
         this.initPopup(menu);
         this.setModel(menu);
         this.setWidget(widget);
-        this.__filterFunc = this.__getFilterModeFunc();
         this.__delayTimer = null;
     },
 
     destruct(){
-        this.__filterFunc = null;
         this.__delayTimer = null;
     },
 
@@ -63,12 +62,6 @@ qx.Class.define("ugpa.completer.Completer", {
         popup: {
             deferredInit: true,
             apply: "_applyPopup"
-        },
-
-        filterMode: {
-            init: "startsWith",
-            check: ["startsWith", "contains", "endsWith"],
-            apply: "_applyFilterMode"
         }
     },
 
@@ -99,10 +92,6 @@ qx.Class.define("ugpa.completer.Completer", {
         _applyPopup(popup){
             qx.Interface.assertObject(popup, ugpa.completer.IPopup);
             this.__updatePopupWidth();
-        },
-
-        _applyFilterMode(){
-            this.__filterFunc = this.__getFilterModeFunc();
         },
 
         _onFocus(){
@@ -156,7 +145,7 @@ qx.Class.define("ugpa.completer.Completer", {
 
         __applyInput(input){
             this.__clearPopup();
-            const values = this.__getValuesFromSourceByWord(input);
+            const values = this.filterByInput(input, this.__source);
             if (values.length){
                 values.slice(0, this.getMaxVisibleItems()).forEach(this.__addItemOnPopup, this);
                 this.__applyAutofocus();
@@ -179,37 +168,6 @@ qx.Class.define("ugpa.completer.Completer", {
         __clearPopup(){
             const model = this.getModel();
             model.removeAll();
-        },
-
-        __getValuesFromSourceByWord(input){
-            let values;
-            if (!this.getCaseSensitivity()){
-                values = this.__filterCaseInsensitiveValues(input);
-            } else {
-                values = this.__filterCaseSensitiveValues(input);
-            }
-            return values;
-        },
-
-        __filterCaseInsensitiveValues(input){
-            input = input.toLowerCase();
-            return this.__variants.filter(value =>{
-                value = value.toLowerCase();
-                return this.__filterFunc(input)(value);
-            });
-        },
-
-        __filterCaseSensitiveValues(input){
-            return this.__variants.filter(this.__filterFunc(input));
-        },
-
-        __getFilterModeFunc(){
-            const table = {
-                startsWith: input => value => value.startsWith(input),
-                contains: input => value => value.includes(input),
-                endsWith: input => value => value.endsWith(input)
-            };
-            return table[this.getFilterMode()];
         }
     }
 });
