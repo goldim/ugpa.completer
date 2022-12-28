@@ -11,6 +11,7 @@ qx.Class.define("ugpa.completer.Completer", {
         this.setModel(menu);
         this.setWidget(widget);
         this.__filterFunc = this.__getFilterModeFunc();
+        this.__delayTimer = null;
     },
 
     events: {
@@ -19,6 +20,11 @@ qx.Class.define("ugpa.completer.Completer", {
     },
 
     properties: {
+        delay: {
+            init: 0,
+            check: "Integer"
+        },
+
         model: {
             init: null,
             apply: "_applyModel",
@@ -112,8 +118,14 @@ qx.Class.define("ugpa.completer.Completer", {
                 return;
             }
 
-            this.__showPopup();
-            this.__applyInput(input);
+            if (this.__delayTimer){
+                this.__delayTimer.stop();
+                this.__delayTimer = null;
+            }
+            this.__delayTimer = qx.event.Timer.once(function(){
+                this.__showPopup();
+                this.__applyInput(input);
+            }, this, this.getDelay());
         },
 
         __showPopup(){
