@@ -14,6 +14,11 @@ qx.Class.define("ugpa.completer.Completer", {
         this.__delayTimer = null;
     },
 
+    destruct(){
+        this.__filterFunc = null;
+        this.__delayTimer = null;
+    },
+
     events: {
         "activated": "qx.event.type.Event",
         "highlighted": "qx.event.type.Event"
