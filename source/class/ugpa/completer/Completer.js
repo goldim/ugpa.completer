@@ -111,7 +111,10 @@ qx.Class.define("ugpa.completer.Completer", {
                 }
                 return;
             }
+            this.__searchWithTimer(input);
+        },
 
+        __searchWithTimer(input){
             this.__stopDelayTimer();
 
             this.__delayTimer = qx.event.Timer.once(function(){
@@ -141,6 +144,10 @@ qx.Class.define("ugpa.completer.Completer", {
                     popup.setSelectedButton(firstButton);
                 }
             }
+        },
+
+        search(value){
+            this.__searchWithTimer(value);
         },
 
         __applyInput(input){
