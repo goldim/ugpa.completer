@@ -118,14 +118,19 @@ qx.Class.define("ugpa.completer.Completer", {
                 return;
             }
 
-            if (this.__delayTimer){
-                this.__delayTimer.stop();
-                this.__delayTimer = null;
-            }
+            this.__stopDelayTimer();
+
             this.__delayTimer = qx.event.Timer.once(function(){
                 this.__showPopup();
                 this.__applyInput(input);
             }, this, this.getDelay());
+        },
+
+        __stopDelayTimer(){
+            if (this.__delayTimer){
+                this.__delayTimer.stop();
+                this.__delayTimer = null;
+            }
         },
 
         __showPopup(){
