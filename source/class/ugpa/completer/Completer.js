@@ -25,7 +25,7 @@ qx.Class.define("ugpa.completer.Completer", {
             event: "changeModel"
         },
 
-        autofocus: {
+        autoFocus: {
             init: false,
             check: "Boolean"
         },
@@ -123,7 +123,7 @@ qx.Class.define("ugpa.completer.Completer", {
         },
 
         __applyAutofocus(){
-            if (this.getAutofocus()){
+            if (this.getAutoFocus()){
                 const popup = this.getPopup();
                 const firstButton = popup.getSelectables()[0];
                 if (firstButton){
