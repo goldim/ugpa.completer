@@ -10,6 +10,10 @@ qx.Class.define("ugpa.completer.ListCompleter", {
         widget.addListener("keydown", this._onKeyPress, this);
         const model = new qx.data.Array();
         const popup = new ugpa.completer.ListPopup(model);
+        popup.getList().getPane().addListener("update", function(){
+            this.getPopup().getList().setHeight(this.getPopup().getList().getPane().getRowConfig().getTotalSize() + 8);
+        }, this);
+
         popup.getList().addListener("changeValue", this._onItemPressed, this);
         this.initPopup(popup);
         this.setModel(model);
@@ -49,7 +53,7 @@ qx.Class.define("ugpa.completer.ListCompleter", {
         },
 
         minLength: {
-            init: 0
+            init: 1
         },
 
         maxVisibleItems: {
@@ -69,6 +73,10 @@ qx.Class.define("ugpa.completer.ListCompleter", {
     },
 
     members: {
+        setDelegate(delegate){
+            this.getPopup().getList().setDelegate(delegate);
+        },
+
         _applyModel(model){
         },
 
@@ -90,7 +98,7 @@ qx.Class.define("ugpa.completer.ListCompleter", {
             if (selection.getLength()){
                 const selected = selection.getItem(0);
                 if (key === "Enter"){
-                    this.getWidget().setValue(selected);
+                    this.__applyValue(selected);
                     this.getPopup().hide();
                 }
 
@@ -123,7 +131,7 @@ qx.Class.define("ugpa.completer.ListCompleter", {
             if (qx.lang.Type.isNumber(index)){
                 const value = this.getModel().getItem(index);
                 list.setSelection([value]);
-                this.getWidget().setValue(value);
+                this.__applyValue(value);
             }
         },
 
@@ -210,7 +218,6 @@ qx.Class.define("ugpa.completer.ListCompleter", {
             const values = this.filterByInput(input, this.__source);
             if (values.length){
                 values.slice(0, this.getMaxVisibleItems()).forEach(this.__addItemOnPopup, this);
-                this.getPopup().getList().setHeight((this.getModel().getLength() + 1) * this.getPopup().getList().getItemHeight());
                 this.__applyAutofocus();
             } else {
                 this.getPopup().hide();
@@ -221,10 +228,17 @@ qx.Class.define("ugpa.completer.ListCompleter", {
             this.getModel().push(value);
         },
 
+        __applyValue(value){
+            if (this.getCompletionColumn()){
+                value = value.get(this.getCompletionColumn());
+            }
+            this.getWidget().setValue(value);
+        },
+
         _onItemPressed(e){
             const index = e.getData()[0];
             const value = this.getModel().getItem(index);
-            this.getWidget().setValue(value);
+            this.__applyValue(value);
             qx.event.Timer.once(function(){this.getPopup().hide();}, this, 100);
         },
 

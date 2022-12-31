@@ -8,6 +8,11 @@ qx.Mixin.define("ugpa.completer.MFilterMode", {
     },
 
     properties: {
+        completionColumn: {
+            nullable: true,
+            init: null,
+        },
+
         filterMode: {
             init: "startsWith",
             check: ["startsWith", "contains", "endsWith"],
@@ -33,13 +38,24 @@ qx.Mixin.define("ugpa.completer.MFilterMode", {
         __filterCaseInsensitiveValues(input, source){
             input = input.toLowerCase();
             return source.filter(value =>{
+                value = this.__applyCompletionColumn(value);
                 value = value.toLowerCase();
                 return this.__filterFunc(input)(value);
-            });
+            }, this);
         },
 
         __filterCaseSensitiveValues(input, source){
-            return source.filter(this.__filterFunc(input));
+            return source.filter(value =>{
+                value = this.__applyCompletionColumn(value);
+                return this.__filterFunc(input)(value);
+            }, this);
+        },
+
+        __applyCompletionColumn(value){
+            if (this.getCompletionColumn()) {
+                return value.get(this.getCompletionColumn());
+            }
+            return value;
         },
 
         __getFilterModeFunc(){
