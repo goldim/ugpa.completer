@@ -6,6 +6,17 @@ qx.Class.define("ugpa.completer.ListPopup", {
         // noinspection JSAnnotator
         super();
         this.setLayout(new qx.ui.layout.Grow());
-        this.add(new qx.ui.list.List(model));
+        const list = this.__list = new qx.ui.list.List(model)
+        this.add(list);
+    },
+
+    destruct(){
+        this.__list.dispose();
+    },
+
+    members: {
+        getList(){
+            return this.__list;
+        }
     }
 });
