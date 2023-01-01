@@ -1,5 +1,5 @@
 qx.Class.define("ugpa.completer.ListCompleter", {
-    extend: ugpa.completer.CompleterBase,
+    extend: ugpa.completer.Completer,
 
     construct(source, widget) {
         // noinspection JSAnnotator
@@ -45,6 +45,9 @@ qx.Class.define("ugpa.completer.ListCompleter", {
                 return;
             }
             const key = e.getKeyIdentifier();
+            if (key === "Backspace"){
+                return;
+            }
             if (key === "Down" || key === "Up"){
                 e.preventDefault();
             }
@@ -96,7 +99,10 @@ qx.Class.define("ugpa.completer.ListCompleter", {
         },
 
         _setupAutoFocus(popup){
-            popup.getList().setSelection([this.getModel().getItem(0)]);
+            const firstItem = this.getModel().getItem(0);
+            if (firstItem){
+                popup.getList().setSelection([firstItem]);
+            }
         },
 
         _addItemOnPopup(value){
