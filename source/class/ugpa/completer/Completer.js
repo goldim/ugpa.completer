@@ -1,3 +1,13 @@
+/* ************************************************************************
+
+   Copyright: 2022
+
+   License: MIT license
+
+   Authors: Dmitrii Zolotov (goldim) zolotovdy@yandex.ru
+
+************************************************************************ */
+
 qx.Class.define("ugpa.completer.Completer", {
     extend: qx.core.Object,
     implement: [qx.ui.form.IModel],
@@ -21,6 +31,10 @@ qx.Class.define("ugpa.completer.Completer", {
     },
 
     properties: {
+        /** The delay in milliseconds between when a keystroke occurs and when a search is performed.
+         *  A zero-delay makes sense for local data (more responsive),
+         *  but can produce a lot of load for remote data,
+         *  while being less responsive */
         delay: {
             init: 0,
             check: "Integer"
@@ -32,20 +46,37 @@ qx.Class.define("ugpa.completer.Completer", {
             event: "changeModel"
         },
 
+        /**
+         * If set to true the first item will automatically
+         * be focused when the menu is shown.
+         */
         autoFocus: {
             init: false,
             check: "Boolean"
         },
 
+        /**
+         *  The case sensitivity of the matching
+         */
         caseSensitivity: {
-            init: true,
-            check: "Boolean"
+            init: "CaseSensitive",
+            check: ["CaseInsensitive", "CaseSensitive"]
         },
 
+        /**
+         * The minimum number of characters a user must type before a search is performed.
+         * Zero is useful for local data with just a few items,
+         * but a higher value should be used
+         * when a single character search could match a few thousand items.
+         */
         minLength: {
-            init: 1
+            init: 1,
+            check: "Integer"
         },
 
+        /**
+         * The maximum allowed size on screen of the completer, measured in items
+         */
         maxVisibleItems: {
             init: 7,
             check: "Integer"
@@ -63,14 +94,6 @@ qx.Class.define("ugpa.completer.Completer", {
     },
 
     members: {
-        _onUpdatePane(){
-            this.getPopup().getList().setHeight(this.getPopup().getList().getPane().getRowConfig().getTotalSize() + 6);
-        },
-
-        setDelegate(delegate){
-            this.getPopup().getList().setDelegate(delegate);
-        },
-
         _applyModel(model){
         },
 
@@ -156,15 +179,11 @@ qx.Class.define("ugpa.completer.Completer", {
             this._clearPopup();
             const values = this.filterByInput(input, this.__source);
             if (values.length){
-                values.slice(0, this.getMaxVisibleItems()).forEach(this.__addItemOnPopup, this);
+                values.slice(0, this.getMaxVisibleItems()).forEach(this._addItemOnPopup, this);
                 this.__applyAutofocus();
             } else {
                 this.getPopup().hide();
             }
-        },
-
-        __addItemOnPopup(value){
-            this._addItemOnPopup(value);
         },
 
         __applyValue(value){
