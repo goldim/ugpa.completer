@@ -4,7 +4,7 @@ qx.Class.define("ugpa.completer.ListCompleter", {
     construct(source, widget) {
         // noinspection JSAnnotator
         super(source, widget);
-        widget.addListener("keydown", this._onKeyPress, this);
+        widget.addListener("keyup", this._onKeyPress, this);
         const model = new qx.data.Array();
         this.__createPopup(model);
         this.setModel(model);
