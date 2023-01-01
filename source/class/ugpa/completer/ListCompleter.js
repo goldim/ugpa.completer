@@ -9,13 +9,7 @@ qx.Class.define("ugpa.completer.ListCompleter", {
         this.__source = source;
         widget.addListener("keydown", this._onKeyPress, this);
         const model = new qx.data.Array();
-        const popup = new ugpa.completer.ListPopup(model);
-        popup.getList().getPane().addListener("update", function(){
-            this.getPopup().getList().setHeight(this.getPopup().getList().getPane().getRowConfig().getTotalSize() + 8);
-        }, this);
-
-        popup.getList().addListener("changeValue", this._onItemPressed, this);
-        this.initPopup(popup);
+        this.__createPopup(model);
         this.setModel(model);
         this.setWidget(widget);
         this.__delayTimer = null;
@@ -73,6 +67,30 @@ qx.Class.define("ugpa.completer.ListCompleter", {
     },
 
     members: {
+        __createPopup(model){
+            const popup = new ugpa.completer.ListPopup(model);
+            const list = popup.getList();
+            list.getPane().addListener("update", this._onUpdatePane, this);
+            list.addListener("changeValue", this._onItemPressed, this);
+            list.addListener("pointerover", this._onPointerDown, this);
+            this.initPopup(popup);
+        },
+
+        _onUpdatePane(){
+            this.getPopup().getList().setHeight(this.getPopup().getList().getPane().getRowConfig().getTotalSize() + 6);
+        },
+
+        _onPointerDown(e){
+            const target = e.getTarget();
+            if (target instanceof qx.ui.form.ListItem){
+                if (this.__lastHoverItem){
+                    this.__lastHoverItem.removeState("selected");
+                }
+                target.addState("selected");
+                this.__lastHoverItem = target;
+            }
+        },
+
         setDelegate(delegate){
             this.getPopup().getList().setDelegate(delegate);
         },
