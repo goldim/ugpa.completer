@@ -5,43 +5,58 @@ qx.Class.define("ugpa.completer.ListCompleter", {
         // noinspection JSAnnotator
         super(source, widget);
         widget.addListener("keyup", this._onKeyPress, this);
-        const model = new qx.data.Array();
-        this.__createPopup(model);
-        this.setModel(model);
-        this.setPopup(this.__createPopup(model));
+        this.__list = this.__createList();
+        this.setPopup(this.__createPopup(this.__list));
+    },
+
+    destruct(){
+        this.__list.dispose();
+        this.__list = null;
     },
 
     members: {
-        __createPopup(model){
-            const popup = new ugpa.completer.ListPopup(model);
-            const list = popup.getList();
+        __getListModel(){
+            return this.__list.getModel();
+        },
+
+        __createList(){
+            const model = new qx.data.Array();
+            const list = new qx.ui.list.List(model);
             list.getPane().addListener("update", this._onUpdatePane, this);
             list.addListener("changeValue", this._onItemPressed, this);
             list.addListener("pointerover", this._onPointerDown, this);
+            return list;
+        },
+
+        __createPopup(list){
+            const popup = new ugpa.completer.ListPopup();
+            popup.add(list);
             return popup;
         },
 
         _onUpdatePane(){
-            this.getPopup().getList().setHeight(this.getPopup().getList().getPane().getRowConfig().getTotalSize() + 6);
+            const height = this.__list.getPane().getRowConfig().getTotalSize() + 6;
+            this.__list.setHeight(height);
         },
 
         _onPointerDown(e){
             const target = e.getTarget();
             if (target instanceof qx.ui.form.ListItem){
-                if (this.__lastHoverItem){
-                    this.__lastHoverItem.removeState("selected");
+                if (this.__oldItem){
+                    this.__oldItem.removeState("selected");
                 }
                 target.addState("selected");
-                this.__lastHoverItem = target;
+                this.__oldItem = target;
             }
         },
 
         setDelegate(delegate){
-            this.getPopup().getList().setDelegate(delegate);
+            this.__list.setDelegate(delegate);
         },
 
         _onKeyPress(e){
-            if (this.getModel().getLength() === 0){
+            const model = this.__getListModel();
+            if (model.getLength() === 0){
                 return;
             }
             const key = e.getKeyIdentifier();
@@ -52,7 +67,7 @@ qx.Class.define("ugpa.completer.ListCompleter", {
                 e.preventDefault();
             }
             let index;
-            const list = this.getPopup().getList();
+            const list = this.__list;
             const selection = list.getSelection();
             if (!this.getPopup().isVisible()){
                 this.getPopup().show();
@@ -65,10 +80,10 @@ qx.Class.define("ugpa.completer.ListCompleter", {
                     this.getPopup().hide();
                 }
 
-                index = this.getModel().indexOf(selected);
+                index = model.indexOf(selected);
 
                 if (key === "Down"){
-                    if (index === this.getModel().getLength() - 1){
+                    if (index === model.getLength() - 1){
                         index = 0;
                     } else {
                         index++;
@@ -77,7 +92,7 @@ qx.Class.define("ugpa.completer.ListCompleter", {
 
                 if (key === "Up"){
                     if (index === 0){
-                        index = this.getModel().getLength() - 1;
+                        index = model.getLength() - 1;
                     } else {
                         index--;
                     }
@@ -88,25 +103,25 @@ qx.Class.define("ugpa.completer.ListCompleter", {
                 }
 
                 if (key === "Up"){
-                    index = this.getModel().getLength() - 1;
+                    index = model.getLength() - 1;
                 }
             }
             if (qx.lang.Type.isNumber(index)){
-                const value = this.getModel().getItem(index);
+                const value = model.getItem(index);
                 list.setSelection([value]);
                 this.__applyValue(value);
             }
         },
 
-        _setupAutoFocus(popup){
-            const firstItem = this.getModel().getItem(0);
+        _setupAutoFocus(){
+            const firstItem = this.__getListModel().getItem(0);
             if (firstItem){
-                popup.getList().setSelection([firstItem]);
+                this.__list.setSelection([firstItem]);
             }
         },
 
         _addItemOnPopup(value){
-            this.getModel().push(value);
+            this.__getListModel().push(value);
         },
 
         __applyValue(value){
@@ -118,9 +133,14 @@ qx.Class.define("ugpa.completer.ListCompleter", {
 
         _onItemPressed(e){
             const index = e.getData()[0];
-            const value = this.getModel().getItem(index);
+            const value = this.__getListModel().getItem(index);
             this.__applyValue(value);
             qx.event.Timer.once(function(){this.getPopup().hide();}, this, 100);
+        },
+
+        _clearPopup(){
+            const model = this.__getListModel();
+            model.removeAll();
         }
     }
 });

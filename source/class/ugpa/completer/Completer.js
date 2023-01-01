@@ -153,7 +153,7 @@ qx.Class.define("ugpa.completer.Completer", {
         },
 
         __applyInput(input){
-            this.__clearPopup();
+            this._clearPopup();
             const values = this.filterByInput(input, this.__source);
             if (values.length){
                 values.slice(0, this.getMaxVisibleItems()).forEach(this.__addItemOnPopup, this);
@@ -172,18 +172,6 @@ qx.Class.define("ugpa.completer.Completer", {
                 value = value.get(this.getCompletionColumn());
             }
             this.getWidget().setValue(value);
-        },
-
-        _onItemPressed(e){
-            const index = e.getData()[0];
-            const value = this.getModel().getItem(index);
-            this.__applyValue(value);
-            qx.event.Timer.once(function(){this.getPopup().hide();}, this, 100);
-        },
-
-        __clearPopup(){
-            const model = this.getModel();
-            model.removeAll();
         }
     }
 });

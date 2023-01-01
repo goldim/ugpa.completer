@@ -10,7 +10,8 @@ qx.Class.define("ugpa.completer.MenuCompleter", {
     },
 
     members: {
-        _setupAutoFocus(popup){
+        _setupAutoFocus(){
+            const popup = this.getPopup();
             const firstButton = popup.getSelectables()[0];
             if (firstButton){
                 popup.setSelectedButton(firstButton);
@@ -26,6 +27,11 @@ qx.Class.define("ugpa.completer.MenuCompleter", {
         _onItemPressed(e){
             const button = e.getTarget();
             this.getWidget().setValue(button.getLabel());
+        },
+
+        _clearPopup(){
+            const model = this.getModel();
+            model.removeAll();
         }
     }
 });
