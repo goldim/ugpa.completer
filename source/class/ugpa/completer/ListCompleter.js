@@ -19,6 +19,11 @@ qx.Class.define("ugpa.completer.ListCompleter", {
             return this.__list.getModel();
         },
 
+        _applyPopup(popup){
+            super._applyPopup(popup);
+            popup.add(this.__list);
+        },
+
         __createList(){
             const model = new qx.data.Array();
             const list = new qx.ui.list.List(model);

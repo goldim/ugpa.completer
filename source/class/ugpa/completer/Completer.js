@@ -11,7 +11,7 @@
 qx.Class.define("ugpa.completer.Completer", {
     extend: qx.core.Object,
     implement: [qx.ui.form.IModel],
-    include: ugpa.completer.MFilterMode,
+    include: [ugpa.completer.MFilterMode],
 
     construct(source, widget) {
         // noinspection JSAnnotator
@@ -42,8 +42,8 @@ qx.Class.define("ugpa.completer.Completer", {
 
         model: {
             init: null,
-            apply: "_applyModel",
-            event: "changeModel"
+            event: "changeModel",
+            check: "qx.data.IListData"
         },
 
         /**
@@ -84,31 +84,27 @@ qx.Class.define("ugpa.completer.Completer", {
 
         widget: {
             init: null,
-            apply: "_applyWidget"
+            apply: "_applyWidget",
+            check: "ugpa.completer.IWidget"
         },
 
         popup: {
             init: null,
-            apply: "_applyPopup"
+            apply: "_applyPopup",
+            check: "ugpa.completer.IPopup"
         }
     },
 
     members: {
-        _applyModel(model){
-        },
-
         _applyWidget(widget){
-            qx.Interface.assertObject(widget, ugpa.completer.IWidget);
-
             widget.addListener("input", this._onInput, this);
             widget.addListener("click", this._onFocus, this);
             widget.addListener("tap", this._onFocus, this);
 
-            this.__updatePopupWidth();
+            this.__updatePopupWidth(this.getPopup());
         },
 
-        __updatePopupWidth(){
-            const popup = this.getPopup();
+        __updatePopupWidth(popup){
             if (popup){
                 const widget = this.getWidget();
                 if (widget){
@@ -118,8 +114,7 @@ qx.Class.define("ugpa.completer.Completer", {
         },
 
         _applyPopup(popup){
-            qx.Interface.assertObject(popup, ugpa.completer.IPopup);
-            this.__updatePopupWidth();
+            this.__updatePopupWidth(popup);
         },
 
         _onFocus(){
@@ -184,13 +179,6 @@ qx.Class.define("ugpa.completer.Completer", {
             } else {
                 this.getPopup().hide();
             }
-        },
-
-        __applyValue(value){
-            if (this.getCompletionColumn()){
-                value = value.get(this.getCompletionColumn());
-            }
-            this.getWidget().setValue(value);
         }
     }
 });
