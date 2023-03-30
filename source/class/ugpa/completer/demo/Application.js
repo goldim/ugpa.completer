@@ -63,10 +63,16 @@ qx.Class.define("ugpa.completer.demo.Application",
     },
 
     __createSettingsBlock(){
+      const block = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+      block.add(this.__createCaseSensitivityBlock());
+      block.add(this.__createFilterModeBlock());
+      return block;
+    },
+
+    __createRadioGroup(legend, choices, handler){
       const radioGrp = new qx.ui.form.RadioGroup();
-      const box = new qx.ui.groupbox.GroupBox("Case Sensitivity");
+      const box = new qx.ui.groupbox.GroupBox(legend);
       box.setLayout(new qx.ui.layout.VBox());
-      const choices = ["Insensitive", "Sensitive"];
       choices.forEach(choice => {
         const button = new qx.ui.form.RadioButton(choice);
         box.add(button);
@@ -74,11 +80,19 @@ qx.Class.define("ugpa.completer.demo.Application",
       });
       radioGrp.addListener("changeValue", function(e){
         const label = e.getData().getLabel();
-        this.__completer.setCaseSensitivity(qx.lang.String.firstLow(label));
+        handler(label);
       }, this);
-      const block = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-      block.add(box);
-      return block;
+      return box;
+    },
+
+    __createFilterModeBlock(){
+      const choices = ["startsWith", "contains", "endsWith"];
+      return this.__createRadioGroup("Filter Mode", choices, (value) => this.__completer.setFilterMode(value))
+    },
+
+    __createCaseSensitivityBlock(){
+      const choices = ["insensitive", "sensitive"];
+      return this.__createRadioGroup("Case Sensitivity", choices, (value) => this.__completer.setCaseSensitivity(value))
     }
   }
 });
