@@ -66,7 +66,7 @@ qx.Class.define("ugpa.completer.demo.Application",
       const block = new qx.ui.container.Composite(new qx.ui.layout.VBox());
       block.add(this.__createCaseSensitivityBlock());
       block.add(this.__createFilterModeBlock());
-      block.add(this.__createNumberSettingsBlock());
+      block.add(this.__createSimpleSettingsBlock());
       return block;
     },
 
@@ -86,12 +86,23 @@ qx.Class.define("ugpa.completer.demo.Application",
       return box;
     },
 
-    __createNumberSettingsBlock(){
+    __createSimpleSettingsBlock(){
       const form = new qx.ui.form.Form();
       this.__createNumberField("Max visible items", form, this.__completer.getMaxVisibleItems(), (value) => this.__completer.setMaxVisibleItems(value));
       this.__createNumberField("Min length", form, this.__completer.getMinLength(), (value) => this.__completer.setMinLength(value));
       this.__createNumberField("Delay (ms)", form, this.__completer.getDelay(), (value) => this.__completer.setDelay(value));
+      this.__createCheckboxField("Autofocus", form, this.__completer.getAutoFocus(), (value) => this.__completer.setAutoFocus(value));
       return new qx.ui.form.renderer.Single(form);
+    },
+
+    __createCheckboxField(legend, form, defaultValue, handler){
+      const checkbox = new qx.ui.form.CheckBox();
+      checkbox.setValue(defaultValue);
+      checkbox.addListener("changeValue", function(e){
+        let value = e.getData();
+        handler(value);
+      }, this);
+      form.add(checkbox, legend);
     },
 
     __createNumberField(legend, form, defaultValue, handler){
