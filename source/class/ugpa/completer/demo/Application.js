@@ -66,6 +66,7 @@ qx.Class.define("ugpa.completer.demo.Application",
       const block = new qx.ui.container.Composite(new qx.ui.layout.VBox());
       block.add(this.__createCaseSensitivityBlock());
       block.add(this.__createFilterModeBlock());
+      block.add(this.__createNumberSettingsBlock());
       return block;
     },
 
@@ -83,6 +84,24 @@ qx.Class.define("ugpa.completer.demo.Application",
         handler(label);
       }, this);
       return box;
+    },
+
+    __createNumberSettingsBlock(){
+      const form = new qx.ui.form.Form();
+      this.__createNumberField("Max visible items", form, this.__completer.getMaxVisibleItems(), (value) => this.__completer.setMaxVisibleItems(value));
+      this.__createNumberField("Min length", form, this.__completer.getMinLength(), (value) => this.__completer.setMinLength(value));
+      this.__createNumberField("Delay (ms)", form, this.__completer.getDelay(), (value) => this.__completer.setDelay(value));
+      return new qx.ui.form.renderer.Single(form);
+    },
+
+    __createNumberField(legend, form, defaultValue, handler){
+      const field = new qx.ui.form.TextField(String(defaultValue));
+      field.addListener("changeValue", function(e){
+        let value = e.getData();
+        value = parseInt(value);
+        handler(value);
+      }, this);
+      form.add(field, legend);
     },
 
     __createFilterModeBlock(){
