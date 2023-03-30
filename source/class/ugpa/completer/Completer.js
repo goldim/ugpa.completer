@@ -59,8 +59,8 @@ qx.Class.define("ugpa.completer.Completer", {
          *  The case sensitivity of the matching
          */
         caseSensitivity: {
-            init: "CaseSensitive",
-            check: ["CaseInsensitive", "CaseSensitive"]
+            init: "sensitive",
+            check: ["insensitive", "sensitive"]
         },
 
         /**

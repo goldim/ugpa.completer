@@ -44,11 +44,41 @@ qx.Class.define("ugpa.completer.demo.Application",
       }
 
       // qx.theme.iconfont.LoadMaterialIcons;
+      const main = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+      main.add(this.__createCompleterBlock());
+      main.add(this.__createSettingsBlock());
+      this.getRoot().add(main, {top: 100, left: 100});
+      
+    },
+
+    __createCompleterBlock(){
       const field = new qx.ui.form.TextField();
       field.setWidth(500);
       const source = new qx.data.Array(["a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg", "abcdefgh"]);
-      const completer = new ugpa.completer.ListCompleter(source, field);
-      this.getRoot().add(field, {top: 100, left: 100});
+      this.__completer = new ugpa.completer.ListCompleter(source, field);
+
+      const block = new qx.ui.container.Composite(new qx.ui.layout.Basic());
+      block.add(field);
+      return block;
+    },
+
+    __createSettingsBlock(){
+      const radioGrp = new qx.ui.form.RadioGroup();
+      const box = new qx.ui.groupbox.GroupBox("Case Sensitivity");
+      box.setLayout(new qx.ui.layout.VBox());
+      const choices = ["Insensitive", "Sensitive"];
+      choices.forEach(choice => {
+        const button = new qx.ui.form.RadioButton(choice);
+        box.add(button);
+        radioGrp.add(button);
+      });
+      radioGrp.addListener("changeValue", function(e){
+        const label = e.getData().getLabel();
+        this.__completer.setCaseSensitivity(qx.lang.String.firstLow(label));
+      }, this);
+      const block = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+      block.add(box);
+      return block;
     }
   }
 });

@@ -27,7 +27,7 @@ qx.Mixin.define("ugpa.completer.MFilterMode", {
 
         filterByInput(input, source){
             let values;
-            if (this.getCaseSensitivity() === "CaseInsensitive"){
+            if (this.getCaseSensitivity() === "insensitive"){
                 values = this.__filterCaseInsensitiveValues(input, source);
             } else {
                 values = this.__filterCaseSensitiveValues(input, source);
