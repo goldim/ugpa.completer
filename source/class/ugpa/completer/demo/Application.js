@@ -92,6 +92,7 @@ qx.Class.define("ugpa.completer.demo.Application",
       this.__createNumberField("Min length", form, this.__completer.getMinLength(), (value) => this.__completer.setMinLength(value));
       this.__createNumberField("Delay (ms)", form, this.__completer.getDelay(), (value) => this.__completer.setDelay(value));
       this.__createCheckboxField("Autofocus", form, this.__completer.getAutoFocus(), (value) => this.__completer.setAutoFocus(value));
+      this.__createCheckboxField("Enabled", form, this.__completer.getEnabled(), (value) => this.__completer.setEnabled(value));
       return new qx.ui.form.renderer.Single(form);
     },
 

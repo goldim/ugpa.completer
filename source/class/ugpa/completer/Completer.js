@@ -40,6 +40,11 @@ qx.Class.define("ugpa.completer.Completer", {
             check: "Integer"
         },
 
+        enabled: {
+            init: true,
+            check: "Boolean"
+        },
+
         model: {
             init: null,
             event: "changeModel",
@@ -118,6 +123,9 @@ qx.Class.define("ugpa.completer.Completer", {
         },
 
         _onFocus(){
+            if (!this.getEnabled()){
+                return;
+            }
             const value = this.getWidget().getValue();
             if (!value && this.getMinLength() > 0){
                 return;
@@ -127,6 +135,9 @@ qx.Class.define("ugpa.completer.Completer", {
         },
 
         _onInput(e){
+            if (!this.getEnabled()){
+                return;
+            }
             const input = e.getData();
             if (input.length < this.getMinLength()) {
                 if (this.getPopup().isVisible()){
