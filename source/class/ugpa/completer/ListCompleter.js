@@ -60,6 +60,9 @@ qx.Class.define("ugpa.completer.ListCompleter", {
         },
 
         _onKeyPress(e){
+            if (!this.getEnabled()){
+                return;
+            }
             const model = this.__getListModel();
             if (model.getLength() === 0){
                 return;

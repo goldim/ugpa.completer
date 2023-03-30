@@ -124,6 +124,7 @@ qx.Class.define("ugpa.completer.Completer", {
 
         _onFocus(){
             if (!this.getEnabled()){
+                this.getPopup().hide();
                 return;
             }
             const value = this.getWidget().getValue();
