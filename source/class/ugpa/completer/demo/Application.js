@@ -29,10 +29,10 @@ qx.Class.define("ugpa.completer.demo.Application",
      * 
      * @lint ignoreDeprecated(alert)
      */
-    main : function()
+    main()
     {
       // Call super class
-      this.base(arguments);
+      super();
 
       // Enable logging in debug variant
       if (qx.core.Environment.get("qx.debug"))
@@ -47,27 +47,31 @@ qx.Class.define("ugpa.completer.demo.Application",
       const main = new qx.ui.container.Composite(new qx.ui.layout.VBox());
       main.add(this.__createCompleterBlock());
       main.add(this.__createSettingsBlock());
+      main.add(this.__createSourceBlock());
       this.getRoot().add(main, {top: 100, left: 100});
-      
     },
 
     __createCompleterBlock(){
       const field = new qx.ui.form.TextField();
+      field.setPlaceholder("Start type some text...");
       field.setWidth(500);
-      const source = new qx.data.Array(["a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg", "abcdefgh"]);
+      const source = this.__source = new qx.data.Array(["a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg", "abcdefgh"]);
       this.__completer = new ugpa.completer.ListCompleter(source, field);
 
-      const block = new qx.ui.container.Composite(new qx.ui.layout.Basic());
+      const block = new qx.ui.groupbox.GroupBox("Autocomplete");
+      block.setLayout(new qx.ui.layout.Basic());
       block.add(field);
       return block;
     },
 
     __createSettingsBlock(){
-      const block = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-      block.add(this.__createCaseSensitivityBlock());
-      block.add(this.__createFilterModeBlock());
-      block.add(this.__createSimpleSettingsBlock());
-      return block;
+      const settingsBlock = new qx.ui.groupbox.GroupBox("Settings");
+      settingsBlock.setLayout(new qx.ui.layout.VBox());
+      settingsBlock.add(this.__createCaseSensitivityBlock());
+      settingsBlock.add(this.__createFilterModeBlock());
+      settingsBlock.add(this.__createSimpleSettingsBlock());
+      settingsBlock.add(new qx.ui.form.Button("Reset"));
+      return settingsBlock;
     },
 
     __createRadioGroup(legend, choices, handler){
@@ -124,6 +128,15 @@ qx.Class.define("ugpa.completer.demo.Application",
     __createCaseSensitivityBlock(){
       const choices = ["insensitive", "sensitive"];
       return this.__createRadioGroup("Case Sensitivity", choices, (value) => this.__completer.setCaseSensitivity(value))
+    },
+
+    __createSourceBlock(){
+      const block = new qx.ui.groupbox.GroupBox("Source List");
+      block.setLayout(new qx.ui.layout.Basic());
+      const list = new qx.ui.list.List();
+      list.setModel(this.__source);
+      block.add(list);
+      return block;
     }
   }
 });
