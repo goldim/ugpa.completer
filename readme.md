@@ -1,4 +1,0 @@
-# ugpa.completer
-
-Field Autocompletion
-
