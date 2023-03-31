@@ -29,14 +29,12 @@ qx.Class.define("ugpa.completer.demo.Application",
      * 
      * @lint ignoreDeprecated(alert)
      */
-    main()
-    {
+    main() {
       // Call super class
       super();
 
       // Enable logging in debug variant
-      if (qx.core.Environment.get("qx.debug"))
-      {
+      if (qx.core.Environment.get("qx.debug")) {
         // support native logging capabilities, e.g. Firebug for Firefox
         qx.log.appender.Native;
         // support additional cross-browser console. Press F7 to toggle visibility
@@ -51,7 +49,7 @@ qx.Class.define("ugpa.completer.demo.Application",
       this.getRoot().add(main, {top: 100, left: 100});
     },
 
-    __createCompleterBlock(){
+    __createCompleterBlock() {
       const field = new qx.ui.form.TextField();
       field.setPlaceholder("Start type some text...");
       field.setWidth(500);
@@ -66,21 +64,21 @@ qx.Class.define("ugpa.completer.demo.Application",
       return block;
     },
 
-    __createSettingsBlock(){
+    __createSettingsBlock() {
       const settingsBlock = new qx.ui.groupbox.GroupBox("Settings");
       settingsBlock.setLayout(new qx.ui.layout.VBox());
       settingsBlock.add(this.__createCaseSensitivityBlock());
       settingsBlock.add(this.__createFilterModeBlock());
       settingsBlock.add(this.__createSimpleSettingsBlock());
       const resetButton = new qx.ui.form.Button("Reset");
-      resetButton.addListener("execute", function(){
+      resetButton.addListener("execute", function() {
         this.resetSettings();
       }, this);
       settingsBlock.add(resetButton);
       return settingsBlock;
     },
 
-    __createRadioGroup(legend, choices, handler){
+    __createRadioGroup(legend, choices, handler) {
       const radioGrp = new qx.ui.form.RadioGroup();
       const box = new qx.ui.groupbox.GroupBox(legend);
       box.setLayout(new qx.ui.layout.VBox());
@@ -89,44 +87,42 @@ qx.Class.define("ugpa.completer.demo.Application",
         box.add(button);
         radioGrp.add(button);
       });
-      radioGrp.addListener("changeValue", function(e){
+      radioGrp.addListener("changeValue", function(e) {
         const label = e.getData().getLabel();
         handler(label);
       }, this);
       return [radioGrp, box];
     },
 
-    __createSimpleSettingsBlock(){
+    __createSimpleSettingsBlock() {
       const form = new qx.ui.form.Form();
 
       const options = { 
-        converter: (value) => {
-          return String(value);
-        }
-      }
+        converter: value => String(value)
+      };
 
-      this.__maxVisibleItemsField = this.__createNumberField("Max visible items", form, (value) => this.__completer.setMaxVisibleItems(value));
+      this.__maxVisibleItemsField = this.__createNumberField("Max visible items", form, value => this.__completer.setMaxVisibleItems(value));
       this.__completer.bind("maxVisibleItems", this.__maxVisibleItemsField, "value", options);
 
-      this.__minLengthField = this.__createNumberField("Min length", form, (value) => this.__completer.setMinLength(value));
+      this.__minLengthField = this.__createNumberField("Min length", form, value => this.__completer.setMinLength(value));
       this.__completer.bind("minLength", this.__minLengthField, "value", options);
 
-      this.__delayField = this.__createNumberField("Delay (ms)", form, (value) => this.__completer.setDelay(value));
+      this.__delayField = this.__createNumberField("Delay (ms)", form, value => this.__completer.setDelay(value));
       this.__completer.bind("delay", this.__delayField, "value", options);
 
       
-      this.__autoFocusCheckBox = this.__createCheckboxField("Autofocus", form, (value) => this.__completer.setAutoFocus(value));
+      this.__autoFocusCheckBox = this.__createCheckboxField("Autofocus", form, value => this.__completer.setAutoFocus(value));
       this.__completer.bind("autoFocus", this.__autoFocusCheckBox, "value");
 
 
-      this.__enabledCheckBox = this.__createCheckboxField("Enabled", form, (value) => this.__completer.setEnabled(value));
+      this.__enabledCheckBox = this.__createCheckboxField("Enabled", form, value => this.__completer.setEnabled(value));
       this.__completer.bind("enabled", this.__enabledCheckBox, "value");
 
 
       return new qx.ui.form.renderer.Single(form);
     },
 
-    resetSettings(){
+    resetSettings() {
       this.__filterRadioGroup.resetValue();
       this.__caseSensitivityRadioGroup.resetValue();
       this.__completer.resetFilterMode();
@@ -138,9 +134,9 @@ qx.Class.define("ugpa.completer.demo.Application",
       this.__completer.resetEnabled();
     },
 
-    __createCheckboxField(legend, form, handler){
+    __createCheckboxField(legend, form, handler) {
       const checkbox = new qx.ui.form.CheckBox();
-      checkbox.addListener("changeValue", function(e){
+      checkbox.addListener("changeValue", function(e) {
         let value = e.getData();
         handler(value);
       }, this);
@@ -148,9 +144,9 @@ qx.Class.define("ugpa.completer.demo.Application",
       return checkbox;
     },
 
-    __createNumberField(legend, form, handler){
+    __createNumberField(legend, form, handler) {
       const field = new qx.ui.form.TextField();
-      field.addListener("changeValue", function(e){
+      field.addListener("changeValue", function(e) {
         let value = e.getData();
         value = parseInt(value);
         handler(value);
@@ -159,21 +155,21 @@ qx.Class.define("ugpa.completer.demo.Application",
       return field;
     },
 
-    __createFilterModeBlock(){
+    __createFilterModeBlock() {
       const choices = ["startsWith", "contains", "endsWith"];
-      const [group, box] = this.__createRadioGroup("Filter Mode", choices, (value) => this.__completer.setFilterMode(value))
+      const [group, box] = this.__createRadioGroup("Filter Mode", choices, value => this.__completer.setFilterMode(value));
       this.__filterRadioGroup = group;
       return box;
     },
 
-    __createCaseSensitivityBlock(){
+    __createCaseSensitivityBlock() {
       const choices = ["insensitive", "sensitive"];
-      const [group, box] = this.__createRadioGroup("Case Sensitivity", choices, (value) => this.__completer.setCaseSensitivity(value))
+      const [group, box] = this.__createRadioGroup("Case Sensitivity", choices, value => this.__completer.setCaseSensitivity(value));
       this.__caseSensitivityRadioGroup = group;
       return box;
     },
 
-    __createSourceBlock(){
+    __createSourceBlock() {
       const box = new qx.ui.groupbox.GroupBox("Source List");
       box.setLayout(new qx.ui.layout.VBox());
       const block = new qx.ui.container.Composite(new qx.ui.layout.HBox());
@@ -190,7 +186,7 @@ qx.Class.define("ugpa.completer.demo.Application",
       const buttonBlock = new qx.ui.container.Composite(new qx.ui.layout.HBox());
       const addButton = new qx.ui.form.Button("Add");
       buttonBlock.add(addButton);
-      addButton.addListener("execute", function(e){
+      addButton.addListener("execute", function(e) {
         const word = field.getValue();
         field.resetValue();
         this.__source.append(word);
@@ -198,9 +194,9 @@ qx.Class.define("ugpa.completer.demo.Application",
       }, this);
 
       const removeButton = new qx.ui.form.Button("Remove");
-      removeButton.addListener("execute", function(e){
+      removeButton.addListener("execute", function(e) {
         const index = this.__source.indexOf(field.getValue());
-        if (index !== -1){
+        if (index !== -1) {
           this.__source.removeAt(index);
         }
       }, this);
@@ -209,15 +205,15 @@ qx.Class.define("ugpa.completer.demo.Application",
 
       controlBlock.add(itemControlBlock);
       const clearButton = new qx.ui.form.Button("Clear");
-      clearButton.addListener("execute", function(){
+      clearButton.addListener("execute", function() {
         this.__source.removeAll();
       }, this);
       controlBlock.add(clearButton);
 
       block.add(controlBlock);
       box.add(block);
-      const resetButton = new qx.ui.form.Button("Reset")
-      resetButton.addListener("execute", function(){
+      const resetButton = new qx.ui.form.Button("Reset");
+      resetButton.addListener("execute", function() {
         this.__source.removeAll();
         this.__source.append(this.__initialData);
       }, this);

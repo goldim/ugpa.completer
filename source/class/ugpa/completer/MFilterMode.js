@@ -1,16 +1,16 @@
 qx.Mixin.define("ugpa.completer.MFilterMode", {
-    construct(){
+    construct() {
         this.__filterFunc = this.__getFilterModeFunc();
     },
 
-    destruct(){
+    destruct() {
         this.__filterFunc = null;
     },
 
     properties: {
         completionColumn: {
             nullable: true,
-            init: null,
+            init: null
         },
 
         filterMode: {
@@ -22,13 +22,13 @@ qx.Mixin.define("ugpa.completer.MFilterMode", {
     },
 
     members: {
-        _applyFilterMode(){
+        _applyFilterMode() {
             this.__filterFunc = this.__getFilterModeFunc();
         },
 
-        filterByInput(input, source){
+        filterByInput(input, source) {
             let values;
-            if (this.getCaseSensitivity() === "insensitive"){
+            if (this.getCaseSensitivity() === "insensitive") {
                 values = this.__filterCaseInsensitiveValues(input, source);
             } else {
                 values = this.__filterCaseSensitiveValues(input, source);
@@ -36,30 +36,30 @@ qx.Mixin.define("ugpa.completer.MFilterMode", {
             return values;
         },
 
-        __filterCaseInsensitiveValues(input, source){
+        __filterCaseInsensitiveValues(input, source) {
             input = input.toLowerCase();
-            return source.filter(value =>{
+            return source.filter(value => {
                 value = this.__applyCompletionColumn(value);
                 value = value.toLowerCase();
                 return this.__filterFunc(input)(value);
             }, this);
         },
 
-        __filterCaseSensitiveValues(input, source){
-            return source.filter(value =>{
+        __filterCaseSensitiveValues(input, source) {
+            return source.filter(value => {
                 value = this.__applyCompletionColumn(value);
                 return this.__filterFunc(input)(value);
             }, this);
         },
 
-        __applyCompletionColumn(value){
+        __applyCompletionColumn(value) {
             if (this.getCompletionColumn()) {
                 return value.get(this.getCompletionColumn());
             }
             return value;
         },
 
-        __getFilterModeFunc(){
+        __getFilterModeFunc() {
             const table = {
                 startsWith: input => value => value.startsWith(input),
                 contains: input => value => value.includes(input),

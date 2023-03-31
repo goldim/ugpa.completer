@@ -2,7 +2,7 @@ qx.Class.define("ugpa.completer.ListPopup", {
     extend: qx.ui.popup.Popup,
     implement: ugpa.completer.IPopup,
 
-    construct(){
+    construct() {
         // noinspection JSAnnotator
         super();
         this.setLayout(new qx.ui.layout.Grow());

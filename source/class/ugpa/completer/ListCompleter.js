@@ -9,22 +9,22 @@ qx.Class.define("ugpa.completer.ListCompleter", {
         this.setPopup(this.__createPopup(this.__list));
     },
 
-    destruct(){
+    destruct() {
         this.__list.dispose();
         this.__list = null;
     },
 
     members: {
-        __getListModel(){
+        __getListModel() {
             return this.__list.getModel();
         },
 
-        _applyPopup(popup){
+        _applyPopup(popup) {
             super._applyPopup(popup);
             popup.add(this.__list);
         },
 
-        __createList(){
+        __createList() {
             const model = new qx.data.Array();
             const list = new qx.ui.list.List(model);
             list.getPane().addListener("update", this._onUpdatePane, this);
@@ -33,21 +33,21 @@ qx.Class.define("ugpa.completer.ListCompleter", {
             return list;
         },
 
-        __createPopup(list){
+        __createPopup(list) {
             const popup = new ugpa.completer.ListPopup();
             popup.add(list);
             return popup;
         },
 
-        _onUpdatePane(){
+        _onUpdatePane() {
             const height = this.__list.getPane().getRowConfig().getTotalSize() + 6;
             this.__list.setHeight(height);
         },
 
-        _onPointerDown(e){
+        _onPointerDown(e) {
             const target = e.getTarget();
-            if (target instanceof qx.ui.form.ListItem){
-                if (this.__oldItem){
+            if (target instanceof qx.ui.form.ListItem) {
+                if (this.__oldItem) {
                     this.__oldItem.removeState("selected");
                 }
                 target.addState("selected");
@@ -55,98 +55,100 @@ qx.Class.define("ugpa.completer.ListCompleter", {
             }
         },
 
-        setDelegate(delegate){
+        setDelegate(delegate) {
             this.__list.setDelegate(delegate);
         },
 
-        _onKeyPress(e){
-            if (!this.getEnabled()){
+        _onKeyPress(e) {
+            if (!this.getEnabled()) {
                 return;
             }
             const model = this.__getListModel();
-            if (model.getLength() === 0){
+            if (model.getLength() === 0) {
                 return;
             }
             const key = e.getKeyIdentifier();
-            if (key === "Backspace"){
+            if (key === "Backspace") {
                 return;
             }
-            if (key === "Down" || key === "Up"){
+            if (key === "Down" || key === "Up") {
                 e.preventDefault();
             }
             let index;
             const list = this.__list;
             const selection = list.getSelection();
-            if (!this.getPopup().isVisible()){
+            if (!this.getPopup().isVisible()) {
                 this.getPopup().show();
             }
 
-            if (selection.getLength()){
+            if (selection.getLength()) {
                 const selected = selection.getItem(0);
-                if (key === "Enter"){
+                if (key === "Enter") {
                     this.__applyValue(selected);
                     this.getPopup().hide();
                 }
 
                 index = model.indexOf(selected);
 
-                if (key === "Down"){
-                    if (index === model.getLength() - 1){
+                if (key === "Down") {
+                    if (index === model.getLength() - 1) {
                         index = 0;
                     } else {
                         index++;
                     }
                 }
 
-                if (key === "Up"){
-                    if (index === 0){
+                if (key === "Up") {
+                    if (index === 0) {
                         index = model.getLength() - 1;
                     } else {
                         index--;
                     }
                 }
             } else {
-                if (key === "Down"){
+                if (key === "Down") {
                     index = 0;
                 }
 
-                if (key === "Up"){
+                if (key === "Up") {
                     index = model.getLength() - 1;
                 }
             }
-            if (qx.lang.Type.isNumber(index)){
+            if (qx.lang.Type.isNumber(index)) {
                 const value = model.getItem(index);
                 list.setSelection([value]);
                 this.__applyValue(value);
             }
         },
 
-        _setupAutoFocus(){
+        _setupAutoFocus() {
             const firstItem = this.__getListModel().getItem(0);
-            if (firstItem){
+            if (firstItem) {
                 this.__list.setSelection([firstItem]);
             }
         },
 
-        _addItemOnPopup(value){
+        _addItemOnPopup(value) {
             this.__getListModel().push(value);
         },
 
-        __applyValue(value){
-            if (this.getCompletionColumn()){
+        __applyValue(value) {
+            if (this.getCompletionColumn()) {
                 value = value.get(this.getCompletionColumn());
             }
             this.getWidget().setValue(value);
         },
 
-        _onItemPressed(e){
+        _onItemPressed(e) {
             const index = e.getData()[0];
             const value = this.__getListModel().getItem(index);
             this.__applyValue(value);
-            qx.event.Timer.once(function(){this.getPopup().hide();}, this, 100);
+            qx.event.Timer.once(function() {
+ this.getPopup().hide(); 
+}, this, 100);
         },
 
-        _clearPopup(){
+        _clearPopup() {
             const model = this.__getListModel();
             model.removeAll();
         }

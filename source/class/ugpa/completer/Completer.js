@@ -21,7 +21,7 @@ qx.Class.define("ugpa.completer.Completer", {
         this.__delayTimer = null;
     },
 
-    destruct(){
+    destruct() {
         this.__delayTimer = null;
     },
 
@@ -107,7 +107,7 @@ qx.Class.define("ugpa.completer.Completer", {
     },
 
     members: {
-        _applyWidget(widget){
+        _applyWidget(widget) {
             widget.addListener("input", this._onInput, this);
             widget.addListener("click", this._onFocus, this);
             widget.addListener("tap", this._onFocus, this);
@@ -115,39 +115,39 @@ qx.Class.define("ugpa.completer.Completer", {
             this.__updatePopupWidth(this.getPopup());
         },
 
-        __updatePopupWidth(popup){
-            if (popup){
+        __updatePopupWidth(popup) {
+            if (popup) {
                 const widget = this.getWidget();
-                if (widget){
+                if (widget) {
                     popup.setWidth(widget.getWidth());
                 }
             }
         },
 
-        _applyPopup(popup){
+        _applyPopup(popup) {
             this.__updatePopupWidth(popup);
         },
 
-        _onFocus(){
-            if (!this.getEnabled()){
+        _onFocus() {
+            if (!this.getEnabled()) {
                 this.getPopup().hide();
                 return;
             }
             const value = this.getWidget().getValue();
-            if (!value && this.getMinLength() > 0){
+            if (!value && this.getMinLength() > 0) {
                 return;
             }
             this.__showPopup();
             this.__applyInput(value === null ? "" : value);
         },
 
-        _onInput(e){
-            if (!this.getEnabled()){
+        _onInput(e) {
+            if (!this.getEnabled()) {
                 return;
             }
             const input = e.getData();
             if (input.length < this.getMinLength()) {
-                if (this.getPopup().isVisible()){
+                if (this.getPopup().isVisible()) {
                     this.getPopup().hide();
                 }
                 return;
@@ -155,43 +155,43 @@ qx.Class.define("ugpa.completer.Completer", {
             this.__searchWithTimer(input);
         },
 
-        __searchWithTimer(input){
+        __searchWithTimer(input) {
             this.__stopDelayTimer();
 
-            this.__delayTimer = qx.event.Timer.once(function(){
+            this.__delayTimer = qx.event.Timer.once(function() {
                 this.__showPopup();
                 this.__applyInput(input);
             }, this, this.getDelay());
         },
 
-        __stopDelayTimer(){
-            if (this.__delayTimer){
+        __stopDelayTimer() {
+            if (this.__delayTimer) {
                 this.__delayTimer.stop();
                 this.__delayTimer = null;
             }
         },
 
-        __showPopup(){
+        __showPopup() {
             const popup = this.getPopup();
             popup.show();
             popup.placeToWidget(this.getWidget());
         },
 
-        __applyAutofocus(){
-            if (this.getAutoFocus()){
+        __applyAutofocus() {
+            if (this.getAutoFocus()) {
                 const popup = this.getPopup();
                 this._setupAutoFocus(popup);
             }
         },
 
-        search(value){
+        search(value) {
             this.__searchWithTimer(value);
         },
 
-        __applyInput(input){
+        __applyInput(input) {
             this._clearPopup();
             const values = this.filterByInput(input, this.__source);
-            if (values.length){
+            if (values.length) {
                 values.slice(0, this.getMaxVisibleItems()).forEach(this._addItemOnPopup, this);
                 this.__applyAutofocus();
             } else {
