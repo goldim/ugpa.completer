@@ -9,3 +9,4 @@ Inspired by JQuery UI Autocomplete widget and Qt Completer widget.
 2. Source list and control panel for it in demo
 3. Get rid of menu and list separation - make one widget class
 4. Make source as remote url and JSON string
+5. Turn on/off icons for autocomplete items

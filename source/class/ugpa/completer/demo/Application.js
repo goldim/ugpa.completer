@@ -55,7 +55,9 @@ qx.Class.define("ugpa.completer.demo.Application",
       const field = new qx.ui.form.TextField();
       field.setPlaceholder("Start type some text...");
       field.setWidth(500);
-      const source = this.__source = new qx.data.Array(["a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg", "abcdefgh"]);
+      this.__initialData = ["a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg", "abcdefgh"];
+      const source = this.__source = new qx.data.Array(this.__initialData);
+      this.__controller = new qx.data.controller.List(this.__source);
       this.__completer = new ugpa.completer.ListCompleter(source, field);
 
       const block = new qx.ui.groupbox.GroupBox("Autocomplete");
@@ -134,28 +136,51 @@ qx.Class.define("ugpa.completer.demo.Application",
       const box = new qx.ui.groupbox.GroupBox("Source List");
       box.setLayout(new qx.ui.layout.VBox());
       const block = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-      const list = new qx.ui.list.List();
-      list.setModel(this.__source);
+      const list = new qx.ui.form.List();
+      this.__controller.setTarget(list);
       block.add(list);
 
       const controlBlock = new qx.ui.groupbox.GroupBox("Control Panel");
       controlBlock.setLayout(new qx.ui.layout.VBox());
 
-      const addBlock = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+      const itemControlBlock = new qx.ui.container.Composite(new qx.ui.layout.VBox());
       const field = new qx.ui.form.TextField();
-      addBlock.add(field);
-      addBlock.add(new qx.ui.form.Button("Add"));
-      controlBlock.add(addBlock);
+      itemControlBlock.add(field);
+      const buttonBlock = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+      const addButton = new qx.ui.form.Button("Add");
+      buttonBlock.add(addButton);
+      addButton.addListener("execute", function(e){
+        const word = field.getValue();
+        field.resetValue();
+        this.__source.append(word);
+        this.__source.sort();
+      }, this);
+
+      const removeButton = new qx.ui.form.Button("Remove");
+      removeButton.addListener("execute", function(e){
+        const index = this.__source.indexOf(field.getValue());
+        if (index !== -1){
+          this.__source.removeAt(index);
+        }
+      }, this);
+      buttonBlock.add(removeButton);
+      itemControlBlock.add(buttonBlock);
+
+      controlBlock.add(itemControlBlock);
       const clearButton = new qx.ui.form.Button("Clear");
       clearButton.addListener("execute", function(){
-        this.__source = new qx.data.Array([]);
-        list.setModel(this.__source);
+        this.__source.removeAll();
       }, this);
       controlBlock.add(clearButton);
 
       block.add(controlBlock);
       box.add(block);
-      box.add(new qx.ui.form.Button("Reset"));
+      const resetButton = new qx.ui.form.Button("Reset")
+      resetButton.addListener("execute", function(){
+        this.__source.removeAll();
+        this.__source.append(this.__initialData);
+      }, this);
+      box.add(resetButton);
       return box;
     }
   }
