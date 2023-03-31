@@ -16,7 +16,8 @@ qx.Mixin.define("ugpa.completer.MFilterMode", {
         filterMode: {
             init: "startsWith",
             check: ["startsWith", "contains", "endsWith"],
-            apply: "_applyFilterMode"
+            apply: "_applyFilterMode",
+            event: "changeFilterMode"
         }
     },
 

@@ -72,7 +72,11 @@ qx.Class.define("ugpa.completer.demo.Application",
       settingsBlock.add(this.__createCaseSensitivityBlock());
       settingsBlock.add(this.__createFilterModeBlock());
       settingsBlock.add(this.__createSimpleSettingsBlock());
-      settingsBlock.add(new qx.ui.form.Button("Reset"));
+      const resetButton = new qx.ui.form.Button("Reset");
+      resetButton.addListener("execute", function(){
+        this.resetSettings();
+      }, this);
+      settingsBlock.add(resetButton);
       return settingsBlock;
     },
 
@@ -89,47 +93,84 @@ qx.Class.define("ugpa.completer.demo.Application",
         const label = e.getData().getLabel();
         handler(label);
       }, this);
-      return box;
+      return [radioGrp, box];
     },
 
     __createSimpleSettingsBlock(){
       const form = new qx.ui.form.Form();
-      this.__createNumberField("Max visible items", form, this.__completer.getMaxVisibleItems(), (value) => this.__completer.setMaxVisibleItems(value));
-      this.__createNumberField("Min length", form, this.__completer.getMinLength(), (value) => this.__completer.setMinLength(value));
-      this.__createNumberField("Delay (ms)", form, this.__completer.getDelay(), (value) => this.__completer.setDelay(value));
-      this.__createCheckboxField("Autofocus", form, this.__completer.getAutoFocus(), (value) => this.__completer.setAutoFocus(value));
-      this.__createCheckboxField("Enabled", form, this.__completer.getEnabled(), (value) => this.__completer.setEnabled(value));
+
+      const options = { 
+        converter: (value) => {
+          return String(value);
+        }
+      }
+
+      this.__maxVisibleItemsField = this.__createNumberField("Max visible items", form, (value) => this.__completer.setMaxVisibleItems(value));
+      this.__completer.bind("maxVisibleItems", this.__maxVisibleItemsField, "value", options);
+
+      this.__minLengthField = this.__createNumberField("Min length", form, (value) => this.__completer.setMinLength(value));
+      this.__completer.bind("minLength", this.__minLengthField, "value", options);
+
+      this.__delayField = this.__createNumberField("Delay (ms)", form, (value) => this.__completer.setDelay(value));
+      this.__completer.bind("delay", this.__delayField, "value", options);
+
+      
+      this.__autoFocusCheckBox = this.__createCheckboxField("Autofocus", form, (value) => this.__completer.setAutoFocus(value));
+      this.__completer.bind("autoFocus", this.__autoFocusCheckBox, "value");
+
+
+      this.__enabledCheckBox = this.__createCheckboxField("Enabled", form, (value) => this.__completer.setEnabled(value));
+      this.__completer.bind("enabled", this.__enabledCheckBox, "value");
+
+
       return new qx.ui.form.renderer.Single(form);
     },
 
-    __createCheckboxField(legend, form, defaultValue, handler){
+    resetSettings(){
+      this.__filterRadioGroup.resetValue();
+      this.__caseSensitivityRadioGroup.resetValue();
+      this.__completer.resetFilterMode();
+      this.__completer.resetCaseSensitivity();
+      this.__completer.resetMaxVisibleItems();
+      this.__completer.resetMinLength();
+      this.__completer.resetDelay();
+      this.__completer.resetAutoFocus();
+      this.__completer.resetEnabled();
+    },
+
+    __createCheckboxField(legend, form, handler){
       const checkbox = new qx.ui.form.CheckBox();
-      checkbox.setValue(defaultValue);
       checkbox.addListener("changeValue", function(e){
         let value = e.getData();
         handler(value);
       }, this);
       form.add(checkbox, legend);
+      return checkbox;
     },
 
-    __createNumberField(legend, form, defaultValue, handler){
-      const field = new qx.ui.form.TextField(String(defaultValue));
+    __createNumberField(legend, form, handler){
+      const field = new qx.ui.form.TextField();
       field.addListener("changeValue", function(e){
         let value = e.getData();
         value = parseInt(value);
         handler(value);
       }, this);
       form.add(field, legend);
+      return field;
     },
 
     __createFilterModeBlock(){
       const choices = ["startsWith", "contains", "endsWith"];
-      return this.__createRadioGroup("Filter Mode", choices, (value) => this.__completer.setFilterMode(value))
+      const [group, box] = this.__createRadioGroup("Filter Mode", choices, (value) => this.__completer.setFilterMode(value))
+      this.__filterRadioGroup = group;
+      return box;
     },
 
     __createCaseSensitivityBlock(){
       const choices = ["insensitive", "sensitive"];
-      return this.__createRadioGroup("Case Sensitivity", choices, (value) => this.__completer.setCaseSensitivity(value))
+      const [group, box] = this.__createRadioGroup("Case Sensitivity", choices, (value) => this.__completer.setCaseSensitivity(value))
+      this.__caseSensitivityRadioGroup = group;
+      return box;
     },
 
     __createSourceBlock(){

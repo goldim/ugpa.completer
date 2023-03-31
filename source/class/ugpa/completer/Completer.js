@@ -37,12 +37,14 @@ qx.Class.define("ugpa.completer.Completer", {
          *  while being less responsive */
         delay: {
             init: 0,
-            check: "Integer"
+            check: "Integer",
+            event: "changeDelay"
         },
 
         enabled: {
             init: true,
-            check: "Boolean"
+            check: "Boolean",
+            event: "changeEnabled"
         },
 
         model: {
@@ -57,7 +59,8 @@ qx.Class.define("ugpa.completer.Completer", {
          */
         autoFocus: {
             init: false,
-            check: "Boolean"
+            check: "Boolean",
+            event: "changeAutoFocus"
         },
 
         /**
@@ -65,7 +68,8 @@ qx.Class.define("ugpa.completer.Completer", {
          */
         caseSensitivity: {
             init: "sensitive",
-            check: ["insensitive", "sensitive"]
+            check: ["insensitive", "sensitive"],
+            event: "changeCaseSensitivity"
         },
 
         /**
@@ -76,7 +80,8 @@ qx.Class.define("ugpa.completer.Completer", {
          */
         minLength: {
             init: 1,
-            check: "Integer"
+            check: "Integer",
+            event: "changeMinLength"
         },
 
         /**
@@ -84,7 +89,8 @@ qx.Class.define("ugpa.completer.Completer", {
          */
         maxVisibleItems: {
             init: 7,
-            check: "Integer"
+            check: "Integer",
+            event: "changeMaxVisibleItems"
         },
 
         widget: {
