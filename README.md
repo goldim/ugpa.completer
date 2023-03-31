@@ -5,7 +5,6 @@ In the future I gonna leave `qx.ui.list.List` implementation because `qx.ui.menu
 Inspired by JQuery UI Autocomplete widget and Qt Completer widget.
 
 # TODO
-1. Reset settings button in demo example
-2. Get rid of menu and list separation - make one widget class
-3. Make source as remote url and JSON string
-4. Turn on/off icons for autocomplete items
+1. Get rid of menu and list separation - make one widget class
+2. Make source as remote url and JSON string
+3. Turn on/off icons for autocomplete items
