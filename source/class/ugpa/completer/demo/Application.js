@@ -131,12 +131,32 @@ qx.Class.define("ugpa.completer.demo.Application",
     },
 
     __createSourceBlock(){
-      const block = new qx.ui.groupbox.GroupBox("Source List");
-      block.setLayout(new qx.ui.layout.Basic());
+      const box = new qx.ui.groupbox.GroupBox("Source List");
+      box.setLayout(new qx.ui.layout.VBox());
+      const block = new qx.ui.container.Composite(new qx.ui.layout.HBox());
       const list = new qx.ui.list.List();
       list.setModel(this.__source);
       block.add(list);
-      return block;
+
+      const controlBlock = new qx.ui.groupbox.GroupBox("Control Panel");
+      controlBlock.setLayout(new qx.ui.layout.VBox());
+
+      const addBlock = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+      const field = new qx.ui.form.TextField();
+      addBlock.add(field);
+      addBlock.add(new qx.ui.form.Button("Add"));
+      controlBlock.add(addBlock);
+      const clearButton = new qx.ui.form.Button("Clear");
+      clearButton.addListener("execute", function(){
+        this.__source = new qx.data.Array([]);
+        list.setModel(this.__source);
+      }, this);
+      controlBlock.add(clearButton);
+
+      block.add(controlBlock);
+      box.add(block);
+      box.add(new qx.ui.form.Button("Reset"));
+      return box;
     }
   }
 });

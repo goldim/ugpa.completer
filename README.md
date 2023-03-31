@@ -1,5 +1,8 @@
 # ugpa.completer
-The Completer class provides completions based on an item model. Inspired by JQuery UI Autocomplete widget and Qt Completer widget.
+The Completer class provides completions based on an item model.
+There are two implementations: one is based on `qx.ui.menu.Menu` and another one on `qx.ui.list.List`.
+In the future I gonna leave `qx.ui.list.List` implementation because `qx.ui.menu.Menu` lacks some functionality which can't be added.
+Inspired by JQuery UI Autocomplete widget and Qt Completer widget.
 
 # TODO
 1. Reset settings button in demo example
