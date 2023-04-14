@@ -4,8 +4,11 @@ There are two implementations: one is based on `qx.ui.menu.Menu` and another one
 In the future I gonna leave `qx.ui.list.List` implementation because `qx.ui.menu.Menu` lacks some functionality which can't be added.
 Inspired by JQuery UI Autocomplete widget and Qt Completer widget.
 
-# example of usage
-See Application Demo file.
+See how it looks and works [here](https://goldim.github.io/ugpa.completer/).
+
+
+# API and Code Samples
+So far there is no generated API docs but you may see code of Application Demo in `source` folder. 
 
 # TODO
 1. Get rid of menu and list separation - make one widget class
